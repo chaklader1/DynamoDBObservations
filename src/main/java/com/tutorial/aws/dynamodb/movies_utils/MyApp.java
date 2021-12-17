@@ -14,7 +14,7 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.S3Client;
 
 
-public class App {
+public class MyApp {
 
     public static void main(String[] args) throws IOException {
 
