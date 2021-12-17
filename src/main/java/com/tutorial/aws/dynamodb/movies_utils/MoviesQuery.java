@@ -1,4 +1,4 @@
-package com.tutorial.aws.dynamodb;///**
+package com.tutorial.aws.dynamodb.movies_utils;///**
 // * Copyright 2010-2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // *
 // * This file is licensed under the Apache License, Version 2.0 (the "License").
@@ -20,7 +20,6 @@ import java.util.Iterator;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;

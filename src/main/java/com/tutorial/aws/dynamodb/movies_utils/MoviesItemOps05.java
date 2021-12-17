@@ -1,48 +1,46 @@
-package com.tutorial.aws.dynamodb;///**
+package com.tutorial.aws.dynamodb.movies_utils;///**
 // * Copyright 2010-2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-// *
+// * <p>
 // * This file is licensed under the Apache License, Version 2.0 (the "License").
 // * You may not use this file except in compliance with the License. A copy of
 // * the License is located at
-// *
+// * <p>
 // * http://aws.amazon.com/apache2.0/
-// *
+// * <p>
 // * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 // * CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // * specific language governing permissions and limitations under the License.
-//*/
+// */
 //
 //
 //package com.example.myapp;
-//
+
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.PrimaryKey;
 import com.amazonaws.services.dynamodbv2.document.Table;
-import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
+import com.amazonaws.services.dynamodbv2.document.UpdateItemOutcome;
+import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
+import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
+import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 
 
 /*
-* get the item from the table
-* */
-
-public class MoviesItemOps02 {
-
-
+ *
+ * The following program shows how to use UpdateItem with a condition. If the condition evaluates to true,
+ * the update succeeds; otherwise, the update is not performed.
+ * */
+public class MoviesItemOps05 {
 
     public static void main(String[] args) throws Exception {
 
-        //        DynamoDbClient client = DynamoDbClient.builder()
-//            .region(Region.US_EAST_1)
-//            .credentialsProvider(StaticCredentialsProvider.create(
-//                AwsBasicCredentials.create("access_key_id", "secret_key_id")))
+//        AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
+//            .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://localhost:8000", "us-west-2"))
 //            .build();
-//
 
         BasicAWSCredentials awsCreds = new BasicAWSCredentials("access_key_id", "secret_key_id");
 
@@ -58,18 +56,20 @@ public class MoviesItemOps02 {
         int year = 2015;
         String title = "The Big New Movie";
 
-        GetItemSpec spec = new GetItemSpec().withPrimaryKey("year", year, "title", title);
+        UpdateItemSpec updateItemSpec = new UpdateItemSpec()
+            .withPrimaryKey(new PrimaryKey("year", year, "title", title)).withUpdateExpression("remove info.actors[0]")
+            .withConditionExpression("size(info.actors) >= :num").withValueMap(new ValueMap().withNumber(":num", 3))
+            .withReturnValues(ReturnValue.UPDATED_NEW);
 
+        // Conditional update (we expect this to fail)
         try {
-            System.out.println("Attempting to read the item...");
-            Item outcome = table.getItem(spec);
-            System.out.println("GetItem succeeded: " + outcome);
+            System.out.println("Attempting a conditional update...");
+            UpdateItemOutcome outcome = table.updateItem(updateItemSpec);
+            System.out.println("UpdateItem succeeded:\n" + outcome.getItem().toJSONPretty());
 
-        }
-        catch (Exception e) {
-            System.err.println("Unable to read item: " + year + " " + title);
+        } catch (Exception e) {
+            System.err.println("Unable to update item: " + year + " " + title);
             System.err.println(e.getMessage());
         }
-
     }
 }

@@ -1,41 +1,49 @@
-package com.tutorial.aws.dynamodb;///**
+package com.tutorial.aws.dynamodb.movies_utils;///**
 // * Copyright 2010-2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-// * <p>
+// *
 // * This file is licensed under the Apache License, Version 2.0 (the "License").
 // * You may not use this file except in compliance with the License. A copy of
 // * the License is located at
-// * <p>
+// *
 // * http://aws.amazon.com/apache2.0/
-// * <p>
+// *
 // * This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 // * CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // * specific language governing permissions and limitations under the License.
-// */
+//*/
 //
 //
 //package com.example.myapp;
+//
+import java.util.Iterator;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.PrimaryKey;
+import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.ItemCollection;
+import com.amazonaws.services.dynamodbv2.document.ScanOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
-import com.amazonaws.services.dynamodbv2.document.UpdateItemOutcome;
-import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
+import com.amazonaws.services.dynamodbv2.document.spec.ScanSpec;
+import com.amazonaws.services.dynamodbv2.document.utils.NameMap;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
-import com.amazonaws.services.dynamodbv2.model.ReturnValue;
+
+
 
 
 /*
- *
- * The following program shows how to use UpdateItem with a condition. If the condition evaluates to true,
- * the update succeeds; otherwise, the update is not performed.
- * */
-public class MoviesItemOps05 {
+*
+* The scan method reads every item in the entire table and returns all the data in the table. You can provide an optional filter_expression so that only the items matching your criteria are returned. However, the filter is applied only after the entire table has been scanned.
+
+The following program scans the entire Movies table, which contains approximately 5,000 items. The scan specifies the optional filter to retrieve only the movies from the 1950s (approximately 100 items) and discard all the others.
+* */
+
+
+public class MoviesScan {
+
 
     public static void main(String[] args) throws Exception {
 
@@ -54,22 +62,22 @@ public class MoviesItemOps05 {
 
         Table table = dynamoDB.getTable("Movies");
 
-        int year = 2015;
-        String title = "The Big New Movie";
+        ScanSpec scanSpec = new ScanSpec().withProjectionExpression("#yr, title, info.rating")
+            .withFilterExpression("#yr between :start_yr and :end_yr").withNameMap(new NameMap().with("#yr", "year"))
+            .withValueMap(new ValueMap().withNumber(":start_yr", 1950).withNumber(":end_yr", 1959));
 
-        UpdateItemSpec updateItemSpec = new UpdateItemSpec()
-            .withPrimaryKey(new PrimaryKey("year", year, "title", title)).withUpdateExpression("remove info.actors[0]")
-            .withConditionExpression("size(info.actors) >= :num").withValueMap(new ValueMap().withNumber(":num", 3))
-            .withReturnValues(ReturnValue.UPDATED_NEW);
-
-        // Conditional update (we expect this to fail)
         try {
-            System.out.println("Attempting a conditional update...");
-            UpdateItemOutcome outcome = table.updateItem(updateItemSpec);
-            System.out.println("UpdateItem succeeded:\n" + outcome.getItem().toJSONPretty());
+            ItemCollection<ScanOutcome> items = table.scan(scanSpec);
 
-        } catch (Exception e) {
-            System.err.println("Unable to update item: " + year + " " + title);
+            Iterator<Item> iter = items.iterator();
+            while (iter.hasNext()) {
+                Item item = iter.next();
+                System.out.println(item.toString());
+            }
+
+        }
+        catch (Exception e) {
+            System.err.println("Unable to scan the table:");
             System.err.println(e.getMessage());
         }
     }

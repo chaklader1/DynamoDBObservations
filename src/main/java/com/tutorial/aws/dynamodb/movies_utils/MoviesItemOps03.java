@@ -1,16 +1,4 @@
-package com.tutorial.aws.dynamodb;///**
-
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
-import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
-
-import java.util.HashMap;
-import java.util.Map;
-
+package com.tutorial.aws.dynamodb.movies_utils;///**
 // * Copyright 2010-2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // * <p>
 // * This file is licensed under the Apache License, Version 2.0 (the "License").
@@ -27,24 +15,25 @@ import java.util.Map;
 //
 //package com.example.myapp;
 //
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 
-import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.document.UpdateItemOutcome;
+import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
+import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
+import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 
-//
-///*
-//*
-//* insert a new item to the table
-//* */
-//
-public class MoviesItemOps01 {
+
+/*
+ * update the item in the table
+ * */
+public class MoviesItemOps03 {
 
     public static void main(String[] args) throws Exception {
 
@@ -69,23 +58,20 @@ public class MoviesItemOps01 {
         int year = 2015;
         String title = "The Big New Movie";
 
-        final Map<String, Object> infoMap = new HashMap<String, Object>();
-        infoMap.put("plot", "Nothing happens at all.");
-        infoMap.put("rating", 0);
+        UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey("year", year, "title", title)
+            .withUpdateExpression("set info.rating = :r, info.plot=:p, info.actors=:a")
+            .withValueMap(new ValueMap().withNumber(":r", 5.5).withString(":p", "Everything happens all at once.")
+                .withList(":a", Arrays.asList("Larry", "Moe", "Curly")))
+            .withReturnValues(ReturnValue.UPDATED_NEW);
 
         try {
-            System.out.println("Adding a new item...");
-
-            Item item = new Item().withPrimaryKey("year", year, "title", title).withMap("info", infoMap);
-            PutItemOutcome outcome = table.putItem(item);
-
-            System.out.println("PutItem succeeded:\n" + outcome.getPutItemResult());
+            System.out.println("Updating the item...");
+            UpdateItemOutcome outcome = table.updateItem(updateItemSpec);
+            System.out.println("UpdateItem succeeded:\n" + outcome.getItem().toJSONPretty());
 
         } catch (Exception e) {
-            System.err.println("Unable to add item: " + year + " " + title);
+            System.err.println("Unable to update item: " + year + " " + title);
             System.err.println(e.getMessage());
         }
-
     }
 }
-

@@ -1,4 +1,4 @@
-package com.tutorial.aws.dynamodb;///**
+package com.tutorial.aws.dynamodb.movies_utils;///**
 // * Copyright 2010-2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // *
 // * This file is licensed under the Apache License, Version 2.0 (the "License").
@@ -17,31 +17,24 @@ package com.tutorial.aws.dynamodb;///**
 //
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.Table;
-import com.amazonaws.services.dynamodbv2.document.UpdateItemOutcome;
-import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
-import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
-import com.amazonaws.services.dynamodbv2.model.ReturnValue;
-
+import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 
 
 /*
-* DynamoDB supports atomic counters. Use the updateItem method to increment or decrement the value of an existing
-* attribute without interfering with other write requests. (All write requests are applied in the order in which
-* they are received.)
- * */
-public class MoviesItemOps04 {
+* get the item from the table
+* */
+
+public class MoviesItemOps02 {
+
+
 
     public static void main(String[] args) throws Exception {
-
-//        AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-//            .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://localhost:8000", "us-west-2"))
-//            .build();
 
         //        DynamoDbClient client = DynamoDbClient.builder()
 //            .region(Region.US_EAST_1)
@@ -64,19 +57,18 @@ public class MoviesItemOps04 {
         int year = 2015;
         String title = "The Big New Movie";
 
-        UpdateItemSpec updateItemSpec = new UpdateItemSpec().withPrimaryKey("year", year, "title", title)
-            .withUpdateExpression("set info.rating = info.rating + :val")
-            .withValueMap(new ValueMap().withNumber(":val", 1)).withReturnValues(ReturnValue.UPDATED_NEW);
+        GetItemSpec spec = new GetItemSpec().withPrimaryKey("year", year, "title", title);
 
         try {
-            System.out.println("Incrementing an atomic counter...");
-            UpdateItemOutcome outcome = table.updateItem(updateItemSpec);
-            System.out.println("UpdateItem succeeded:\n" + outcome.getItem().toJSONPretty());
+            System.out.println("Attempting to read the item...");
+            Item outcome = table.getItem(spec);
+            System.out.println("GetItem succeeded: " + outcome);
 
         }
         catch (Exception e) {
-            System.err.println("Unable to update item: " + year + " " + title);
+            System.err.println("Unable to read item: " + year + " " + title);
             System.err.println(e.getMessage());
         }
+
     }
 }
