@@ -1,0 +1,4 @@
+com/tutorial/aws/dynamodb/model/Observation.class
+com/tutorial/aws/dynamodb/api/ObservationApiController.class
+com/tutorial/aws/dynamodb/service/ObservationService.class
+com/tutorial/aws/dynamodb/application/SiteMonitorApplication.class
