@@ -35,23 +35,23 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.jayway.jsonpath</groupId>
-			<artifactId>json-path</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<artifactId>auth</artifactId>
-			<groupId>software.amazon.awssdk</groupId>
-		</dependency>
-		<dependency>
-			<artifactId>aws-core</artifactId>
-			<groupId>software.amazon.awssdk</groupId>
-		</dependency>
-		<dependency>
-			<artifactId>dynamodb</artifactId>
-			<groupId>software.amazon.awssdk</groupId>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.jayway.jsonpath</groupId>-->
+<!--			<artifactId>json-path</artifactId>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<artifactId>auth</artifactId>-->
+<!--			<groupId>software.amazon.awssdk</groupId>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<artifactId>aws-core</artifactId>-->
+<!--			<groupId>software.amazon.awssdk</groupId>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
+<!--			<artifactId>dynamodb</artifactId>-->
+<!--			<groupId>software.amazon.awssdk</groupId>-->
+<!--		</dependency>-->
 		
 		
 		<dependency>
