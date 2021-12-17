@@ -65,7 +65,7 @@ public class MoviesCreateTable {
 //            .build();
 //
 
-        BasicAWSCredentials awsCreds = new BasicAWSCredentials("AKIAYYR7ZIFU6MRPEEW3", "ZNXyPM+aP0PvYEaV2vQy4iLl4TQILHB9Cy99+nwJ");
+        BasicAWSCredentials awsCreds = new BasicAWSCredentials("access_key_id", "secret_key_id");
 
         AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
             .withRegion(Regions.US_EAST_1)
