@@ -21,9 +21,12 @@ import com.tutorial.aws.dynamodb.service.ObservationService;
 @RequestMapping(value = "/observations")
 public class ObservationApiController {
 
+
+
 	@Autowired
-	ObservationService observationService;
-	
+	private ObservationService observationService;
+
+
 	@PostMapping("/observation")
 	public void saveObservation(@RequestBody Observation observation) {
 		this.observationService.writeObservation(observation);
